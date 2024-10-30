@@ -67,15 +67,15 @@ class AdamAtan2(Optimizer):
                 # init state if needed 
                 if len(state) ==0:
                     state['steps'] =0
-                    state['exp_avg'] = torch.zeros.like(grad)
-                    state['exp_avg_sq'] = torch.zeros.like(grad)
+                    state['exp_avg'] = torch.zeros_like(grad)
+                    state['exp_avg_sq'] = torch.zeros_like(grad)
                     
                     if regen_rate>0.:
                         state['param_init']=p.clone()
                 
                 # get some of the states 
                 
-                exp_avg, exp_avg_sq,steps = state['exp_avg'],state['exp_avg_sq'].state['steps']
+                exp_avg, exp_avg_sq,steps = state['exp_avg'],state['exp_avg_sq'],state['steps']
                 
                 steps+=1 
                 # bias corrections
@@ -103,5 +103,3 @@ class AdamAtan2(Optimizer):
                     
                     
                     
-
-        
