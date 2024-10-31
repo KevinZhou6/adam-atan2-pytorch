@@ -17,37 +17,42 @@ from adam_atan2_pytorch import *
 def get_parser():
     parser = argparse.ArgumentParser(description="Pytorch CIFAR100, Training")
     parser.add_argument("--model",default="resnet34",type=str,help="model",choices=['resnet34','resnet18','resnet50','resnet101','resnet152'])
-    parser.add_argument("--optim",defualt="adam_atan2",type=str,help="optimizer",choices=['sgd','adam','adam_atan2'])
+    parser.add_argument("--optim",default="adam_atan2",type=str,help="optimizer",choices=['sgd','adam','adam_atan2'])
     parser.add_argument("--lr",default=0.05,type=float,help='learning rate')
     parser.add_argument("--beta1",default=0.9,type=float,help ="Adam coefficients beta_1")
     parser.add_argument("--beta2",default=0.99,type=float,help = "Adam coefficients beta_2")
     parser.add_argument("--momentum",default =0.9,type=float,help = "momentum term")
-    parser.add_argument("--resumne",'-r',action="store_true",help="resum from checkpoint")
+    parser.add_argument("--resume",'-r',action="store_true",help="resume from checkpoint")
     parser.add_argument("--weight_decay",default=5e-4,type=float,help="weight decay for opt")
     
     return parser 
 
 def build_dataset():
-    print("==> Preparing data ..")
-    transforms_train = transforms.Composed([
-        transforms.RandomCrop(32,padding=4),
+    print('==> Preparing data..')
+    transform_train = transforms.Compose([
+        transforms.RandomCrop(32, padding=4),
         transforms.RandomHorizontalFlip(),
         transforms.ToTensor(),
         transforms.Normalize((0.507, 0.487, 0.441), (0.267, 0.256, 0.276)),
     ])
-    
-    transforms_test = transforms.Compose([
+
+    transform_test = transforms.Compose([
         transforms.ToTensor(),
-        transforms.Normallize((0.507, 0.487, 0.441), (0.267, 0.256, 0.276))
+        transforms.Normalize((0.507, 0.487, 0.441), (0.267, 0.256, 0.276)),
     ])
-    
-    trainset = torchvision.datasets.CIFAR100(root="./datasets",train=True,download=True,transform=transforms_train)
-    train_loader = torch.utils.data.DataLoader(trainset,batch_size=64,shuffle=True,num_workers=2)
-    
-    testset = torchvision.datasets.Cityscapes(root="../datasets",train=False,download=True,transform=transforms_test)
-    test_loader = torch.utils.data.DataLoader(testset,batch_size=128,shuffle=False,num_workers=2)
-    
-    return  train_loader,test_loader
+
+    trainset = torchvision.datasets.CIFAR100(root='./dataset', train=True, download=True,
+                                             transform=transform_train)
+    train_loader = torch.utils.data.DataLoader(trainset, batch_size=128, shuffle=True,
+                                               num_workers=2)
+
+    testset = torchvision.datasets.CIFAR100(root='./dataset', train=False, download=True,
+                                            transform=transform_test)
+    test_loader = torch.utils.data.DataLoader(testset, batch_size=100, shuffle=False, num_workers=2)
+
+    # classes = ('plane', 'car', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
+
+    return train_loader, test_loader
 
 def get_ckpt_name(dataset="cifar100",model="resnet",optimizer="adam_atan2",lr=0.05,momentum=0.9,beta1=0.9,beta2=0.99):
     name={
@@ -96,9 +101,9 @@ def create_optimizer(args,model_params):
         return AdamAtan2(model_params,args.lr,betas=(args.beta1,args.beta2),weight_decay=args.weight_decay)
 
 def train(net,epoch,device,data_loader,optimizer,criterion):
-    print("\n Epoch :d" % epoch)
+    print(f"Epoch :{epoch}")
     
-    net.trian()
+    net.train()
     
     train_loss=0
     correct=0
@@ -114,10 +119,10 @@ def train(net,epoch,device,data_loader,optimizer,criterion):
         
         train_loss +=loss.item()
         _,predicted = out.max(1)
-        total +=targets.size()
+        total +=targets.size(0)
         correct +=predicted.eq(targets).sum().item()
     
-    accuracy =100.*correct/total 
+    accuracy = 100. * correct / total
     print('train acc %.3f' % accuracy)
     
     return accuracy
@@ -136,15 +141,15 @@ def test(net,device,data_loader,criterion):
             _,predicts = out.max(1)
             total+=targets.size(0)
             correct += predicts.eq(targets).sum().item()
-    accuracy = 100.0*correct/total
-    print('train acc %.3f' % accuracy)
+    accuracy = 100. * correct / total
+    print(' test acc %.3f' % accuracy)
     return accuracy
 
 def main():
     parser =get_parser()
     args = parser.parse_args()
     train_loader,test_loader = build_dataset()
-    device ="cuda:3" if torch.cuda.is_avaliable() else "cpu"
+    device ="cuda:3" if torch.cuda.is_available() else "cpu"
     
     ckpt_name = get_ckpt_name(model=args.model,optimizer=args.optim,lr=args.lr,
                               momentum=args.momentum,beta1=args.beta1, beta2=args.beta2,)
@@ -189,7 +194,8 @@ def main():
         if not os.path.isdir('curve'):
             os.mkdir('curve')
         torch.save({"train_acc":train_accuracies,"test_acc":test_accuracies},os.path.join('curve',ckpt_name))
-        
+    
+    print(f"---Model: {args.model} -----Optimizer:{args.optim} ----- BestAcc:{best_acc}")
     
     
     

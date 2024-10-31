@@ -1,0 +1,19 @@
+----- Model ------ Optimizer ------ Best_acc ------ 
+    ResNet18       AdamAtan2 
+    ResNet18       Adam 
+    ResNet18       SGD 
+    ResNet34       AdamAtan2 
+    ResNet34       Adam 
+    ResNet34       SGD 
+    ResNet50       AdamAtan2 
+    ResNet50       Adam 
+    ResNet50       SGD 
+    ResNet50       AdamAtan2 
+    ResNet50       Adam 
+    ResNet50       SGD 
+    ResNet101      AdamAtan2 
+    ResNet101      Adam 
+    ResNet101      SGD 
+    ResNet152      AdamAtan2 
+    ResNet152      Adam 
+    ResNet152      SGD 
