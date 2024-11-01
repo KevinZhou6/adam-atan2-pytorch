@@ -149,7 +149,7 @@ def main():
     parser =get_parser()
     args = parser.parse_args()
     train_loader,test_loader = build_dataset()
-    device ="cuda:3" if torch.cuda.is_available() else "cpu"
+    device ="cuda:2" if torch.cuda.is_available() else "cpu"
     
     ckpt_name = get_ckpt_name(model=args.model,optimizer=args.optim,lr=args.lr,
                               momentum=args.momentum,beta1=args.beta1, beta2=args.beta2,)
@@ -171,7 +171,7 @@ def main():
     train_accuracies=[]
     test_accuracies=[]
     
-    for epoch in range(start_epoch+1,300):
+    for epoch in range(start_epoch+1,200):
         
         train_acc = train(model,epoch,device,train_loader,optimizer,criterion,scheduler)
         test_acc = test(model,device,test_loader,criterion)

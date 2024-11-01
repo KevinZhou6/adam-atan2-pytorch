@@ -3,22 +3,23 @@ import matplotlib.pyplot as plt
 import torch 
 import numpy as np
 
-LABELS=['SGD','Adam','AdamAtan2']
+LABELS=['SGD','Adam','Adam_Atan2']
 
-def get_folder_path(use_pretrained=True):
+def get_folder_path(use_pretrained=False):
     if use_pretrained:
-        path='pretrained'
+        path='./checkpoint'
     else:
-        path ='curve'
+        path ='./curve'
     return path 
 
-def get_curve_data(use_pretrained=True,model='Resnet34'):
+def get_curve_data(use_pretrained=False,model='resnet18'):
     folder_path = get_folder_path(use_pretrained)
+    
     filenames =[name for name in os.listdir(folder_path) if name.startswith(model.lower())]
     paths =[os.path.join(folder_path,name) for name in filenames]
     
     keys = [name.split('-')[1] for name in filenames]
-    return {keys:torch.load(fp) for key,fp in zip(keys,paths)}
+    return {key:torch.load(fp) for key,fp in zip(keys,paths)}
 
 
 def plot(use_pretrained=True,model='resnet18',optimizers=None,curve_type='train'):
@@ -50,8 +51,8 @@ def main():
     # plot(use_pretrained=True, model='ResNet', optimizers=LABELS, curve_type='train')
     # plot(use_pretrained=True, model='ResNet', optimizers=LABELS, curve_type='test')
 
-    plot(use_pretrained=True, model='resnet18', optimizers=LABELS, curve_type='train')
-    plot(use_pretrained=True, model='resnet18', optimizers=LABELS, curve_type='test')
+    plot(use_pretrained=False, model='resnet18', optimizers=LABELS, curve_type='train')
+    plot(use_pretrained=False, model='resnet18', optimizers=LABELS, curve_type='test')
 
 if __name__ == '__main__':
     main()
