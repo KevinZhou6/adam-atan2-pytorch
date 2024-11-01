@@ -1,8 +1,8 @@
------ Model ------ Optimizer ------ Best_acc ------ 
-    ResNet18       AdamAtan2 
-    ResNet18       Adam 
-    ResNet18       SGD 
-    ResNet34       AdamAtan2 
+----- Model ------ Optimizer ------ Best_acc ------ lr ----- beta1 ---- beta2 ----- momentum ---- scheduler
+    ResNet18       AdamAtan2    61.51               0.05    0.9         0.99       -                -
+    ResNet18       Adam         55.41               0.05    0.9         0.99        -               -
+    ResNet18       SGD          78.26               0.05                           0.9              -
+    ResNet34       AdamAtan2    67.6                0.05    0.9         0.9                         MultiStepLR
     ResNet34       Adam 
     ResNet34       SGD 
     ResNet50       AdamAtan2 

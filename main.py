@@ -100,7 +100,7 @@ def create_optimizer(args,model_params):
     elif args.optim=="adam_atan2":
         return AdamAtan2(model_params,args.lr,betas=(args.beta1,args.beta2),weight_decay=args.weight_decay)
 
-def train(net,epoch,device,data_loader,optimizer,criterion):
+def train(net,epoch,device,data_loader,optimizer,criterion,scheduler):
     print(f"Epoch :{epoch}")
     
     net.train()
@@ -116,7 +116,7 @@ def train(net,epoch,device,data_loader,optimizer,criterion):
         loss =criterion(out,targets)
         loss.backward()
         optimizer.step()
-        
+        scheduler.step()
         train_loss +=loss.item()
         _,predicted = out.max(1)
         total +=targets.size(0)
@@ -172,8 +172,8 @@ def main():
     test_accuracies=[]
     
     for epoch in range(start_epoch+1,300):
-        scheduler.step()
-        train_acc = train(model,epoch,device,train_loader,optimizer,criterion)
+        
+        train_acc = train(model,epoch,device,train_loader,optimizer,criterion,scheduler)
         test_acc = test(model,device,test_loader,criterion)
         
         if test_acc > best_acc:
